@@ -35,3 +35,6 @@
 # it to be locally stored.
 # Your R project should now be linked with Git.
 
+## Questions 3 ##
+
+# A vector is an object of multiple scalar elements (i.e. numbers)
