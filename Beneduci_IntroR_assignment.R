@@ -14,7 +14,7 @@
 # insert the function of interest into the parentheses.
 # An R package is a collection of pre-made functions
 # that can be downloaded and used.
-# A function is a collection of code used to manipulate objects
+# A function is a collection of code used to manipulate objects.
 # You navigate to the "Packages" tab in the lower right
 # window to see all available and loaded functions.
 # The working directory is the directory where the R project
@@ -43,7 +43,7 @@
 # character. A matrix could be considered (at least visually) as being made of
 # multiple vectors. A matrix can have multiple rows AND columns.
 # A dataframe is an object containing multiple data classes. It can be thought
-# of as a matrix with different data classes between columns.
+# of as a matrix with the possibility of different data classes between columns.
 
 ### Question 4 ###
 
