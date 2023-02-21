@@ -124,8 +124,78 @@ plot(x = mtcars$wt, y = mtcars$mpg,
 # Convention is to tstart a new geome on the next line
 # Ggplot works with layers. The layers towards the bottom are at the front
 ggplot(mtcars, aes(x = wt, y = mpg)) +
-  geom_point(alpha = 0.5) + # Alpha adjusts the transparency
-  geom_smooth(method = lm, color = "black") + # can easily use the options method to avoid this smoothing and apply a linear model
+  geom_point(alpha = 0.5, aes(size = wt, color = wt)) + # Alpha adjusts the transparency
+  geom_smooth(method = lm, se = FALSE, color = "blue") + # can easily use the options method to avoid this smoothing and apply a linear model
   xlab("Weight") +
   ylab("Miles per gallon") +
-  theme_classic() # Can apply themes with buil in visual styles
+  theme_classic()+ # Can apply themes with built in visual styles
+  scale_color_gradient(low = "forestgreen", high = "black")+
+  scale_y_log10() # Auto transform the axis
+
+# If you put size into the main portion of function, then it will try to apply size to everything
+
+getwd()
+
+bullrichdat<-read.csv("./Data/Bull_richness.csv", na.strings = NA) # ../ mean one folder up
+# If you include "./" and hit tab, it will give options of folders to select.
+
+head(bullrichdat)
+
+# Subset the dataset where Soybean Within No-till treatments are shown
+bull.richness.soy.no.till<-bullrichdat[bullrichdat$Crop == "Soy" &
+                                           bullrichdat$Treatment == "No-till",]
+
+library(ggplot2)
+
+ggplot(bull.richness.soy.no.till, aes(x = GrowthStage, y = richness, color = Fungicide))+
+  geom_boxplot()+
+  theme_classic()+
+  xlab("Growth Stage")+
+  ylab("Richness")+
+  geom_point(position = position_jitterdodge(dodge.width = 0.9))# Shows the distribution of all the points, identifying outliers
+
+# Can also import data straight from a web-hosted csv file
+bull.richness<- read.csv('https://raw.githubusercontent.com/noelzach/Reproducibility/main/07_ggplot/Bull_richness.csv')
+
+##### Feb 21, 2023 #####
+
+## Need to use fun.data for the mean standard error
+ggplot(bull.richness.soy.no.till, aes(x = GrowthStage, y = richness, fill = Fungicide))+
+  xlab("Growth Stage")+
+  ylab("Richness")+
+  stat_summary(fun=mean, geom = "bar", position = "dodge")+
+  stat_summary(fun.data = mean_se, geom = "errorbar", position = "dodge")+
+  geom_point(position = position_jitterdodge(dodge.width = 0.9), shape = 21, color = "black")+ #Need to change the shape to one with dots and outlines
+  scale_color_manual(values = c("blue", "green"))+
+  scale_fill_manual(values = c("blue", "green"))
+
+# How to represent these data as a timeseries
+# Need to give a group argument in the main ggplot function 
+ggplot(bull.richness.soy.no.till, aes(x = GrowthStage, y = richness, color = Fungicide, group = Fungicide))+
+  xlab("Growth Stage")+
+  ylab("Bulleribasidiaceae \n Richness")+ # \n adds a line break for the label
+  stat_summary(fun=mean, geom = "line")+
+  stat_summary(fun=mean, geom = "point")+
+  stat_summary(fun.data = mean_se, geom = "errorbar")
+
+# Demonstration of facetting
+
+# Need to reorder the levels of your factor
+
+bullrichdat$GrowthStage <- factor(bullrichdat$GrowthStage, levels = c("V6", "V8", "V15", "R3", "R4", "R6"))
+
+palette <- c("Green", "Black")
+
+ggplot(bullrichdat, aes(x = GrowthStage, y = richness, color = Fungicide, group = Fungicide))+
+  xlab("Growth Stage")+
+  ylab("Bulleribasidiaceae \n Richness")+
+  stat_summary(fun=mean, geom = "line")+
+  stat_summary(fun=mean, geom = "point")+
+  stat_summary(fun.data = mean_se, geom = "errorbar")+
+  facet_wrap(~Crop*Treatment, scales = "free")+ # Adding an interaction by crop facets by treamtment and crop
+  # can change the order of the interaction to change the headings
+  # Can also change the scales for each facet via the "scales = "free'" argument
+  scale_color_manual(values = palette)+
+  theme_classic()
+  # Should recolor for color blindness and add jittered points to show the distribution
+
