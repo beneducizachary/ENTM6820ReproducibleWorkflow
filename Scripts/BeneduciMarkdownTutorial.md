@@ -10,6 +10,24 @@ Can also set output: github_document
 
 R code is written in between the first and last lines of the chunk
 
+# This is a first level header.
+
+## This is a second level header.
+
+### This is a third level header.
+
+#### This is a fourth level header.
+
+*italics*
+
+*italics*
+
+**bold**
+
+**bold**
+
+> This is emphasized text
+
 ``` r
 data(mtcars)
 summary(mtcars)
@@ -36,3 +54,25 @@ summary(mtcars)
     ##  Mean   :0.4062   Mean   :3.688   Mean   :2.812  
     ##  3rd Qu.:1.0000   3rd Qu.:4.000   3rd Qu.:4.000  
     ##  Max.   :1.0000   Max.   :5.000   Max.   :8.000
+
+### Unordered lists
+
+- item one
+- item two
+- item three
+  - second level item
+- first item
+- second item
+- third item
+  - second level item
+
+1.  First item
+2.  Second item
+    - second item under
+
+### Links
+
+[This is a hyperlink](https://github.com/beneducizachary/ENTM6820)
+
+Link to Zach’s github repository
+<https://github.com/beneducizachary/ENTM6820>
