@@ -2,12 +2,11 @@
 title: "BeneduciMarkdownTutorial"
 author: "Zachary Beneduci"
 date: "2023-02-23"
-output: 
-  html_document:
-    keep_md: yes
-  word_document: default
+output: github_document
 ---
 Want to save this as a markdown file for github, so we need to change the yaml options
+
+Can also set output: github_document
 
 R code is written in between the first and last lines of the chunk
 
