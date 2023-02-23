@@ -1,0 +1,18 @@
+---
+title: "BeneduciMarkdownTutorial"
+author: "Zachary Beneduci"
+date: "2023-02-23"
+output: 
+  html_document:
+    keep_md: yes
+  word_document: default
+---
+Want to save this as a markdown file for github, so we need to change the yaml options
+
+R code is written in between the first and last lines of the chunk
+
+```{r}
+data(mtcars)
+summary(mtcars)
+```
+
