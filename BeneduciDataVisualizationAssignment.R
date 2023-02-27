@@ -1,3 +1,23 @@
+##### Question 1 #####
+
+# A geom is a layer that adds some visualization of the data. A facet is a separate
+# plot of some specified subset of your data. By adding geoms, you can build multiple
+# types of information into your figure. For example, you would add a base layer,
+# a barplot, and then error bars to create a typical barplot. The error bars would
+# be positioned in the foreground of the figure, while the base layer (the blank canvas)
+# would be in the background. You would add your x and y variables within the
+# aesthetics function itself nested in the base layer of a ggplot, such as 
+# ggplot(aes(x, y)). Different attributes to the data are mapped within functions.
+# Sometimes, these attributes may be mapped within aes(), the base ggplot() function,
+# or additional geoms such as geom_point(). It's somewhat situational. In many
+# basic plots, aspects of the data, such as sample size and distribution, are hidden.
+# For example, a barplot simply plots the sample mean, showing nothing else.
+# It could be that when comparing bar means, there is a single outlier in a group
+# driving the percieved difference, while the majority of observations exhibit a
+# much smaller mean. It would, therefore, be misleading to obscure this information.
+# Jitter can be used to show the individual observations, revealing any differences
+# in sample size, outliers, and the distribution of the data.
+
 
 ##### Question 2 #####
 
@@ -5,7 +25,7 @@
 library(ggplot2)
 
 # Load the data
-datum <- read.csv("https://raw.githubusercontent.com/noelzach/EndophyteBiocontrol/main/Data/MycotoxinData.csv")
+datum <- read.csv("https://raw.githubusercontent.com/noelzach/EndophyteBiocontrol/main/Data/MycotoxinData.csv", na.strings = "NA")
 
 head(datum)
 
@@ -147,7 +167,7 @@ ggplot(datum, aes(x=Treatment, y = DON, fill = Cultivar, group = Cultivar))+
 ##### Question 9 #####
 
 # Both the boxlpots and barplots are showing the central tendency of groupings of data.
-# The middle line of the boxplot showing the median and the barplot showing the
+# The middle line of the boxplot shows the median and the barplot shows the
 # mean (in this case). However, the distribution of the data is hidden behind the base barplot,
 # while the boxplot shows the 25% quartile ranges and highlights any outlier data points.
 # The barplot is far more obscure about the distribution of the data compared to the boxplot.
@@ -161,3 +181,22 @@ ggplot(datum, aes(x=Treatment, y = DON, fill = Cultivar, group = Cultivar))+
 ggplot(datum, aes(Treatment, DON, fill = Cultivar))+
   geom_violin()
 
+# A plot involving density doesn't work so well with these data.
+
+# Could try a sinaplot, which gives information on sample size and density distribution.
+# At small sample sizes it collapses to a strip chart.
+
+install.packages("ggforce")
+library(ggforce)
+
+ggplot(datum, aes(Treatment, DON), color = "Cultivar", group = Cultivar)+
+  geom_sina(aes(color = Cultivar))+
+  theme_classic()
+
+# Out of these two, I would probably choose the sinaplot, but both aren't very
+# suitable. Because these data are continuous and not collected through time, the boxplot
+# with jitter is probably most appropriate. It summarizes the central tendency
+# of the data and also shows sample size, spread, and any outliers. It can also
+# help to check for between-group homoscedasticity of variance, which is an assumption of
+# many statistical tests.
+            
