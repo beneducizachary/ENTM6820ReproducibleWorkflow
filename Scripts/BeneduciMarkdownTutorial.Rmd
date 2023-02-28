@@ -58,3 +58,17 @@ summary(mtcars)
 
 Link to Zach's github repository
 https://github.com/beneducizachary/ENTM6820
+
+### Adding Images
+
+Image of *Viola sp*.
+
+![](../DSC_0969.jpg)
+
+The better way to load a table with the kable function
+```{r}
+data(mtcars)
+library(knitr)
+kable(head(mtcars), format = "markdown")
+```
+
