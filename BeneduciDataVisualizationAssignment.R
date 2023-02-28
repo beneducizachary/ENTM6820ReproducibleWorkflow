@@ -13,7 +13,7 @@
 # basic plots, aspects of the data, such as sample size and distribution, are hidden.
 # For example, a barplot simply plots the sample mean, showing nothing else.
 # It could be that when comparing bar means, there is a single outlier in a group
-# driving the percieved difference, while the majority of observations exhibit a
+# driving the perceived difference, while the majority of observations exhibit a
 # much smaller mean. It would, therefore, be misleading to obscure this information.
 # Jitter can be used to show the individual observations, revealing any differences
 # in sample size, outliers, and the distribution of the data.
@@ -198,5 +198,8 @@ ggplot(datum, aes(Treatment, DON), color = "Cultivar", group = Cultivar)+
 # with jitter is probably most appropriate. It summarizes the central tendency
 # of the data and also shows sample size, spread, and any outliers. It can also
 # help to check for between-group homoscedasticity of variance, which is an assumption of
-# many statistical tests.
+# many statistical tests. If it were my data, I'd choose a boxplot with jitter or
+# a violin plot. Both should correctly convey that there were many zeros my first
+# field season. Although, the boxplot would be more appropriate for finer scale subsets
+# of the dataset.
             
