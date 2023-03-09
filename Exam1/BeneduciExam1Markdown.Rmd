@@ -243,7 +243,7 @@ Now when you try to push your code to GitHub the push is rejected and gives the 
 **Answer 8.**
 
 It looks like you'd receive that error for deleting a file on GitHub rather than locally.
-If this is the case, one can simply pull the project from GitHub.
+If this is the case, one can simply pull the project from GitHub. Any missing files will be downloaded to the local machine.
 
 **Question 9.** Explain the purpose of a Data Management Plan.
 

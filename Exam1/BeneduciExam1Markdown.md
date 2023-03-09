@@ -474,7 +474,8 @@ not have locally***.” How do you solve this?
 
 It looks like you’d receive that error for deleting a file on GitHub
 rather than locally. If this is the case, one can simply pull the
-project from GitHub.
+project from GitHub. Any missing files will be downloaded to the local
+machine.
 
 **Question 9.** Explain the purpose of a Data Management Plan.
 
