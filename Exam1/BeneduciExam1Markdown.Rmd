@@ -1,7 +1,7 @@
 ---
 title: "Beneduci Exam 1"
 author: "Zachary Beneduci"
-output: github_document
+output: html_document
 date: "2023-03-08"
 editor_options: 
   markdown: 
