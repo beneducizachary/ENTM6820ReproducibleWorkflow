@@ -425,6 +425,11 @@ and paste your GitHub url here
 
 **Answer 6.**
 
+Link to repository: <https://github.com/beneducizachary/ENTM6820.git>
+
+Link to folder with files:
+<https://github.com/beneducizachary/ENTM6820/tree/main/Exam1>
+
 **Question 7.** What is the correct order of events to get your code on
 GitHub through RStudio? Explain each step from creation of a repository
 to pushing.
