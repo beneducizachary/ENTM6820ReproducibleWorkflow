@@ -9,6 +9,8 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+GitHub url: https://github.com/beneducizachary/ENTM6820/tree/main/Markdown
+
 Load tidyverse and download and unpack the datafile from GitHub:
 
 ```{r}
