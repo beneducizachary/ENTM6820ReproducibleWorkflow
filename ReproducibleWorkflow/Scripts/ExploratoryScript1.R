@@ -30,7 +30,95 @@ datum2 <- datum1 %>%
   mutate(
     TotalDens = sum(c_across(ASTU:RUHI2)), # Sums all counts across columns.
     Richness = sum(c_across(ASTU:RUHI2)!=0) # Counts the frequency of values >0.
-    )
+    ) %>%
+  mutate(Row = 
+           case_when(between(Subplot, 1, 4)~1,
+                     between(Subplot, 5, 8)~2,
+                     between(Subplot, 8, 12)~3,
+                     between(Subplot, 13, 16)~4)) %>%
+  mutate(Col = 
+           case_when(Subplot == 4 | Subplot == 8 | Subplot == 12 | Subplot == 16 ~ 1,
+                     Subplot == 3 | Subplot == 7 | Subplot == 11 | Subplot == 15 ~ 2,
+                     Subplot == 2 | Subplot == 6 | Subplot == 10 | Subplot == 14 ~ 3,
+                     Subplot == 1 | Subplot == 5 | Subplot == 9 | Subplot == 13 ~ 4)) %>%
+ # Finally, we'll add the treatment information. However, the treatments were
+  # not applied at this stage, so we are looking for no treatment effects!
+  mutate(Treatment =
+           case_when(Subplot == 1 & Site == FCU1 ~ "Disking",
+                     Subplot == 2 & Site == FCU1 ~ "Mowing",
+                     Subplot == 3 & Site == FCU1 ~ "Combo",
+                     Subplot == 4 & Site == FCU1 ~ "Control",
+                     Subplot == 5 & Site == FCU1 ~ "Mowing",
+                     Subplot == 6 & Site == FCU1 ~ "Control",
+                     Subplot == 7 & Site == FCU1 ~ "Disking",
+                     Subplot == 8 & Site == FCU1 ~ "Combo",
+                     Subplot == 9 & Site == FCU1 ~ "Combo",
+                     Subplot == 10 & Site == FCU1 ~ "Disking",
+                     Subplot == 11 & Site == FCU1 ~ "Mowing",
+                     Subplot == 12 & Site == FCU1 ~ "Control",
+                     Subplot == 13 & Site == FCU1 ~ "Control",
+                     Subplot == 14 & Site == FCU1 ~ "Mowing",
+                     Subplot == 15 & Site == FCU1 ~ "Combo",
+                     Subplot == 16 & Site == FCU1 ~ "Disking",
+                     Subplot == 1 & Site == BEU1 ~ "Combo",
+                     Subplot == 2 & Site == BEU1 ~ "Disking",
+                     Subplot == 3 & Site == BEU1 ~ "Mowing",
+                     Subplot == 4 & Site == BEU1 ~ "Control",
+                     Subplot == 5 & Site == BEU1 ~ "Mowing",
+                     Subplot == 6 & Site == BEU1 ~ "Control",
+                     Subplot == 7 & Site == BEU1 ~ "Combo",
+                     Subplot == 8 & Site == BEU1 ~ "Disking",
+                     Subplot == 9 & Site == BEU1 ~ "Disking",
+                     Subplot == 10 & Site == BEU1 ~ "Mowing",
+                     Subplot == 11 & Site == BEU1 ~ "Control",
+                     Subplot == 12 & Site == BEU1 ~ "Combo",
+                     Subplot == 13 & Site == BEU1 ~ "Control",
+                     Subplot == 14 & Site == BEU1 ~ "Combo",
+                     Subplot == 15 & Site == BEU1 ~ "Disking",
+                     Subplot == 16 & Site == BEU1 ~ "Mowing",
+                     Subplot == 1 & Site == PBU1 ~ "Mowing",
+                     Subplot == 2 & Site == PBU1 ~ "Disking",
+                     Subplot == 3 & Site == PBU1 ~ "Combo",
+                     Subplot == 4 & Site == PBU1 ~ "Control",
+                     Subplot == 5 & Site == PBU1 ~ "Control",
+                     Subplot == 6 & Site == PBU1 ~ "Combo",
+                     Subplot == 7 & Site == PBU1 ~ "Mowing",
+                     Subplot == 8 & Site == PBU1 ~ "Disking",
+                     Subplot == 9 & Site == PBU1 ~ "Disking",
+                     Subplot == 10 & Site == PBU1 ~ "Mowing",
+                     Subplot == 11 & Site == PBU1 ~ "Combo",
+                     Subplot == 12 & Site == PBU1 ~ "Control",
+                     Subplot == 13 & Site == PBU1 ~ "Disking",
+                     Subplot == 14 & Site == PBU1 ~ "Combo",
+                     Subplot == 15 & Site == PBU1 ~ "Control",
+                     Subplot == 16 & Site == PBU1 ~ "Mowing"))
+
+### Preliminary model fitting
+
+# Let's try a simple linear model:
+lm1 <- lm()
+
+
+
+## Tile plot of planted richness across subplots
+ggplot(datum2, aes(x = Col, y = Row, fill = Richness)) +
+  geom_tile(color = "white",
+            lwd = 1.5,
+            linetype = 1) +
+  scale_fill_gradient(low = "white", high = "darkgreen") +
+  geom_text(aes(label = Richness), color = "black", size = 4) +
+  coord_fixed() +
+  facet_wrap(~Site*Round)
+
+## Tile plot of flower density/10m^2
+ggplot(datum2, aes(x = Col, y = Row, fill = TotalDens)) +
+  geom_tile(color = "white",
+            lwd = 1.5,
+            linetype = 1) +
+  scale_fill_gradient(low = "white", high = "darkgreen") +
+  geom_text(aes(label = TotalDens), color = "black", size = 4) +
+  coord_fixed() +
+  facet_wrap(~Site*Round)
 
 ggplot(datum2, aes(x = as.factor(Subplot), y = Richness)) +
   geom_boxplot() +
@@ -39,3 +127,5 @@ ggplot(datum2, aes(x = as.factor(Subplot), y = Richness)) +
 ggplot(datum2, aes(x = as.factor(Subplot), y = TotalDens)) +
   geom_boxplot() +
   facet_wrap(~Site)
+
+## There's definitely evidence of clustering going on. 
