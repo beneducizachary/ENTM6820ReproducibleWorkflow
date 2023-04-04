@@ -92,7 +92,8 @@ datum2 <- datum1 %>%
                      Subplot == 15 & Site == "PBU1" ~ "Control",
                      Subplot == 16 & Site == "PBU1" ~ "Mowing")) %>%
   mutate_at(c(16), as.factor) %>%
-  mutate(Treatment = relevel(Treatment, "Control"))
+  mutate(Treatment = relevel(Treatment, "Control")) %>%
+  mutate_at(c(3), as.factor)
 ### ANALYSIS
 
 # This dataset represents pre-treatment data collected during the 2022 field season
@@ -163,7 +164,8 @@ glmmTotalDens2 <- glmer.nb(TotalDens ~ Treatment + (1|Site/Subplot), datum2)
 plot(residuals(glmmTotalDens2))
 
 ### glmmTMB
-
+install.packages("devtools")
+library(devtools)
 
 ## Try a multivariable model with Site and Round:
 
