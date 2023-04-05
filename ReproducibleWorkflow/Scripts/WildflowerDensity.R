@@ -10,8 +10,7 @@ library(tidyverse)
 
 ### Format for analysis of planted wildflower richness and density.
 datum2 <- datum1 %>%
-  select(Date, Round, Site, Subplot, Quadrat, ASTU, COTI3, CHFA2, DRAM, GAPU,
-         HEAN2, MOPU, RUHI2) %>% # Select
+  select(Date, Round, Site, Subplot, Quadrat, ASTU, COTI3, CHFA2, DRAM, GAPU, HEAN2, MOPU, RUHI2) %>% # Select
   # relevant grouping variables and our planted species.
   filter(Round == "c"|Round == "d"|Round == "e"|Round == "f") %>% # This filters out sampling rounds a and b,
   # which did not have any planted wildflowers recorded.
@@ -174,18 +173,29 @@ library(DHARMa)
 glmm1 <- glmmTMB(TotalDens ~ Treatment + (1|Site/Subplot), datum2,
                 family = poisson)
 summary(glmm1)
-
+plot(simulateResiduals(fittedModel = glmm1))
 
 # Negative binomial:
 glmm2 <- glmmTMB(TotalDens ~ Treatment + (1|Site/Subplot), datum2,
                  family = nbinom2)
 summary(glmm2)
+plot(simulateResiduals(fittedModel = glmm2))
 
+# Zero-inflated poisson:
 
+zip1 <- glmmTMB(TotalDens ~ Treatment + (1|Site/Subplot), datum2,
+                family = poisson, ziformula = ~1)
+summary(zip1)
+plot(simulateResiduals(fittedModel = zip1))
 
+# Zero-inflated negative binomial:
 
+zinb1<- glmmTMB(TotalDens ~ Treatment + (1|Site/Subplot), datum2,
+                family = nbinom2, ziformula = ~1)
+summary(zinb1)
+plot(simulateResiduals(fittedModel = zinb1))
 
-glm2 <- glm.nb(TotalDens~Treatment, datum2)
-summary(glm2)
-
-anova(glm1, glm2)
+# Inspecting the DHARMa residual plots shows that the negative binomial and
+# its zero-inflated counterpart fit far better than both poisson models.
+# The regular negative binomial looks best, as the model complexity added by
+# the zero inflated portion doesn't provide much improvement.
