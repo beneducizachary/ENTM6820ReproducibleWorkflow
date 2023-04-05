@@ -10,7 +10,8 @@ library(tidyverse)
 
 ### Format for analysis of planted wildflower richness and density.
 datum2 <- datum1 %>%
-  select(Date, Round, Site, Subplot, Quadrat, ASTU, COTI3, CHFA2, DRAM, GAPU, HEAN2, MOPU, RUHI2) %>% # Select
+  select(Date, Round, Site, Subplot, Quadrat, ASTU, COTI3, CHFA2, DRAM, GAPU,
+         HEAN2, MOPU, RUHI2) %>% # Select
   # relevant grouping variables and our planted species.
   filter(Round == "c"|Round == "d"|Round == "e"|Round == "f") %>% # This filters out sampling rounds a and b,
   # which did not have any planted wildflowers recorded.
@@ -41,7 +42,7 @@ datum2 <- datum1 %>%
                      Subplot == 2 | Subplot == 6 | Subplot == 10 | Subplot == 14 ~ 3,
                      Subplot == 1 | Subplot == 5 | Subplot == 9 | Subplot == 13 ~ 4)) %>%
  # Finally, we'll add the treatment information. However, the treatments were
-  # not applied at this stage, so we are looking for no treatment effects!
+ # not applied at this stage, so we are looking for no treatment effects!
   mutate(Treatment =
            case_when(Subplot == 1 & Site == "FCU1" ~ "Disking",
                      Subplot == 2 & Site == "FCU1" ~ "Mowing",
@@ -94,7 +95,139 @@ datum2 <- datum1 %>%
   mutate_at(c(16), as.factor) %>%
   mutate(Treatment = relevel(Treatment, "Control")) %>%
   mutate_at(c(3), as.factor)
-### ANALYSIS
+
+ggplot(datum2, aes(x = Treatment, y = TotalDens)) +
+  geom_boxplot() +
+  facet_wrap(~Site*Round)
+
+
+
+
+
+
+#### Formatting for wildflower ~ cover relationships
+
+datum3 <- datum1 %>%
+  select(Date, Round, Site, Subplot, Quadrat, Bare, Litter, Rock, Gram, Forb,
+         ASTU, COTI3, CHFA2, DRAM, GAPU, HEAN2, MOPU, RUHI2) %>%
+  filter(Round == "c"|Round == "d"|Round == "e"|Round == "f") %>%
+  mutate_at(c(6:18), as.numeric) %>%
+  mutate_at(c(6:18), ~replace_na(.,0)) %>%
+  rowwise() %>% # Specify that we want to calculate within rows.
+  mutate(
+    Density = sum(c_across(ASTU:RUHI2)), # Sums all counts across columns.
+    Richness = sum(c_across(ASTU:RUHI2)!=0) # Counts the frequency of values >0.
+  ) %>%
+  mutate(Treatment =
+           case_when(Subplot == 1 & Site == "FCU1" ~ "Disking",
+                     Subplot == 2 & Site == "FCU1" ~ "Mowing",
+                     Subplot == 3 & Site == "FCU1" ~ "Combo",
+                     Subplot == 4 & Site == "FCU1" ~ "Control",
+                     Subplot == 5 & Site == "FCU1" ~ "Mowing",
+                     Subplot == 6 & Site == "FCU1" ~ "Control",
+                     Subplot == 7 & Site == "FCU1" ~ "Disking",
+                     Subplot == 8 & Site == "FCU1" ~ "Combo",
+                     Subplot == 9 & Site == "FCU1" ~ "Combo",
+                     Subplot == 10 & Site == "FCU1" ~ "Disking",
+                     Subplot == 11 & Site == "FCU1" ~ "Mowing",
+                     Subplot == 12 & Site == "FCU1" ~ "Control",
+                     Subplot == 13 & Site == "FCU1" ~ "Control",
+                     Subplot == 14 & Site == "FCU1" ~ "Mowing",
+                     Subplot == 15 & Site == "FCU1" ~ "Combo",
+                     Subplot == 16 & Site == "FCU1" ~ "Disking",
+                     Subplot == 1 & Site == "BEU1" ~ "Combo",
+                     Subplot == 2 & Site == "BEU1" ~ "Disking",
+                     Subplot == 3 & Site == "BEU1" ~ "Mowing",
+                     Subplot == 4 & Site == "BEU1" ~ "Control",
+                     Subplot == 5 & Site == "BEU1" ~ "Mowing",
+                     Subplot == 6 & Site == "BEU1" ~ "Control",
+                     Subplot == 7 & Site == "BEU1" ~ "Combo",
+                     Subplot == 8 & Site == "BEU1" ~ "Disking",
+                     Subplot == 9 & Site == "BEU1" ~ "Disking",
+                     Subplot == 10 & Site == "BEU1" ~ "Mowing",
+                     Subplot == 11 & Site == "BEU1" ~ "Control",
+                     Subplot == 12 & Site == "BEU1" ~ "Combo",
+                     Subplot == 13 & Site == "BEU1" ~ "Control",
+                     Subplot == 14 & Site == "BEU1" ~ "Combo",
+                     Subplot == 15 & Site == "BEU1" ~ "Disking",
+                     Subplot == 16 & Site == "BEU1" ~ "Mowing",
+                     Subplot == 1 & Site == "PBU1" ~ "Mowing",
+                     Subplot == 2 & Site == "PBU1" ~ "Disking",
+                     Subplot == 3 & Site == "PBU1" ~ "Combo",
+                     Subplot == 4 & Site == "PBU1" ~ "Control",
+                     Subplot == 5 & Site == "PBU1" ~ "Control",
+                     Subplot == 6 & Site == "PBU1" ~ "Combo",
+                     Subplot == 7 & Site == "PBU1" ~ "Mowing",
+                     Subplot == 8 & Site == "PBU1" ~ "Disking",
+                     Subplot == 9 & Site == "PBU1" ~ "Disking",
+                     Subplot == 10 & Site == "PBU1" ~ "Mowing",
+                     Subplot == 11 & Site == "PBU1" ~ "Combo",
+                     Subplot == 12 & Site == "PBU1" ~ "Control",
+                     Subplot == 13 & Site == "PBU1" ~ "Disking",
+                     Subplot == 14 & Site == "PBU1" ~ "Combo",
+                     Subplot == 15 & Site == "PBU1" ~ "Control",
+                     Subplot == 16 & Site == "PBU1" ~ "Mowing"))
+
+#### Comparison of cover by treatments
+
+
+#### ANALYSIS
+
+### Wildflowers and cover relationships
+
+ggplot(datum3, aes(x = Richness)) + # Response underdispersed
+  geom_histogram()
+
+ggplot(datum3, aes(x = Density)) + # Response overdispersed and proabbly zero inflated.
+  geom_histogram()
+
+
+
+ggplot(datum3, aes(x = Litter, y = Richness)) +
+  geom_point() +
+  geom_smooth(method = lm)
+
+lmCover <- lm(Richness ~ Forb, datum3)
+summary(lmCover)
+
+plot(residuals(lmCover)) # Looks like autocorrelation.
+
+ggplot(datum3, aes(x = Gram, y = Density)) +
+  geom_point() +
+  geom_smooth(method = lm)
+
+lmCover2 <- lm(Density ~ Forb, datum3)
+summary(lmCover2)
+
+plot(residuals(lmCover2)) # Looks non-Gaussian.
+
+# The error distributions of both models are clearly non-Gaussian. Therefore,
+# we need to investigate other model families.
+
+glmCover <- glm(Richness ~ Forb, family = poisson, datum3)
+summary(glmCover)
+plot(residuals(glmCover))
+
+glmCover2 <- glm(Density ~ Forb, family = poisson, datum3)
+summary(glmCover2)
+plot(residuals(glmCover2))
+
+library(MASS)
+
+glmCover2b <- glm.nb(Density ~ Forb, datum3)
+summary(glmCover2b)
+plot(residuals(glmCover2b))
+
+library(DHARMa)
+library(glmmTMB)
+install.packages("Matrix")
+install.packages('TMB', type = 'source')
+
+glmmTMBCover2 <- glmmTMB(Density ~ Forb, datum3, family = nbinom2, ziformula = ~1)
+summary(glmmTMBCover2)
+check <- simulateResiduals(fittedModel = glmmTMBCover2)
+plot(check)
+
 
 # This dataset represents pre-treatment data collected during the 2022 field season
 # before treatments were applied in fall 2022/winter 2023. Therefore,
