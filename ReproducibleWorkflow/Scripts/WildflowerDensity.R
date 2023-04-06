@@ -161,13 +161,13 @@ plot(residuals(lmm))
 # 192 subplots. We do have singular fit, which is expected when estimating
 # random effects with 3 levels for Site and 4 levels for Subplot. Here, I
 # opt to keep it to avoid pseudoreplication. Moreover, a recent paper
-# showed that including random effects with 0 estimated variance to avoid
-# pseudoreplication won't hurt.
+# showed that including random effects with few levels to specify nesting is
+# can only help hypothesis tests.
 
 
 ## Clearly the residuals are off, so let's find a better error family:
-library(glmmTMB)
-library(DHARMa)
+library(glmmTMB) # A useful package for fitting generalized linear mixed models.
+library(DHARMa) # A package of diagnostic functions for such models.
 
 # Poisson:
 glmm1 <- glmmTMB(TotalDens ~ Treatment + (1|Site/Subplot), datum2,
@@ -182,14 +182,12 @@ summary(glmm2)
 plot(simulateResiduals(fittedModel = glmm2))
 
 # Zero-inflated poisson:
-
 zip1 <- glmmTMB(TotalDens ~ Treatment + (1|Site/Subplot), datum2,
                 family = poisson, ziformula = ~1)
 summary(zip1)
 plot(simulateResiduals(fittedModel = zip1))
 
 # Zero-inflated negative binomial:
-
 zinb1<- glmmTMB(TotalDens ~ Treatment + (1|Site/Subplot), datum2,
                 family = nbinom2, ziformula = ~1)
 summary(zinb1)
@@ -199,3 +197,40 @@ plot(simulateResiduals(fittedModel = zinb1))
 # its zero-inflated counterpart fit far better than both poisson models.
 # The regular negative binomial looks best, as the model complexity added by
 # the zero inflated portion doesn't provide much improvement.
+
+# Can also inspect the AIC score, a measure of model fit.
+
+anova(glmm1, glmm2)
+# The negative binomial (glmm2) has a much lower AIC, indicating better fit.
+
+anova(glmm2, zinb1)
+# Comparing negative binomial to it's zero-inflated counterpart,
+# the delta AIC = 2. This is usually the maximum value to declare models 
+# that fit the data equally well, as adding an additional parameter
+# will always raise the AIC due to the penalty applied for model complexity.
+# Sticking to the less complex model is still probably best. This is also
+# supported by the the lack of change in estimates between the two.
+
+## Model summaries:
+#install.packages("broom.mixed")
+library(broom.mixed)
+
+# Raw output:
+glmm2 %>%
+  broom.mixed::tidy()
+
+# Marginal means:
+#install.packages("emmeans")
+library(emmeans)
+
+glmm2 %>%
+  emmeans("Treatment", type = "response")
+
+# There is high variation for these faux-effects, leading to low confidence
+# in estimates. I'm not too surprised, as there is a lot of variation across
+# subplots. This preliminary analysis suggests that there would need to be
+# quite a large difference in effect size between treatments and control
+# to detect an effect, which is slightly worrisome. I'm flirting with trying a
+# spatial autocorrelation model (possibly from package spaMM) or trying a random
+# slopes model once my post-treatment data come in after this field season. Not
+# sure about the latter, as this can be quite data hungry.
