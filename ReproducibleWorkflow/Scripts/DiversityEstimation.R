@@ -126,7 +126,8 @@ richplot <- flwrasyrich %>%
   geom_errorbar(aes(ymin = LCL, ymax = UCL, width = 0.15)) +
   geom_point(aes(size = 3)) +
   theme_classic() +
-  theme(panel.border = element_rect(color = "black", fill = NA, linewidth = .5)) +
+  theme(panel.border = element_rect(color = "black", fill = NA, linewidth = .5),
+        axis.text = element_text(color = "black")) +
   guides(size = FALSE, color = "none", shape = "none") +
   scale_y_continuous(name = "Hill Richness", limits = c(5, 10)) +
   scale_color_manual(values = cbp1) +
@@ -141,7 +142,8 @@ shanplot <- flwrasyshan %>%
   geom_errorbar(aes(ymin = LCL, ymax = UCL, width = 0.15)) +
   geom_point(aes(size = 3)) +
   theme_classic() +
-  theme(panel.border = element_rect(color = "black", fill = NA, linewidth = .5)) +
+  theme(panel.border = element_rect(color = "black", fill = NA, linewidth = .5),
+        axis.text = element_text(color = "black")) +
   guides(size = FALSE, color = "none", shape = "none") +
   scale_y_continuous(name = "Hill Shannon", limits = c(3.5, 5)) +
   scale_color_manual(values = cbp1) +
@@ -156,12 +158,13 @@ simpplot <- flwrasysimp %>%
   geom_errorbar(aes(ymin = LCL, ymax = UCL, width = 0.15)) +
   geom_point(aes(size = 3)) +
   theme_classic() +
-  theme(panel.border = element_rect(color = "black", fill = NA, linewidth = .5)) +
+  theme(panel.border = element_rect(color = "black", fill = NA, linewidth = .5),
+        axis.text = element_text(color = "black")) +
   guides(size = FALSE, color = "none", shape = "none") +
   scale_y_continuous(name = "Hill Simpson", limits = c(3, 4.5)) +
   scale_color_manual(values = cbp1) +
   scale_shape_manual(values = c(15, 16, 17, 18)) +
   xlab(NULL)
 
-grid.arrange(richplot, shanplot,simpplot, nrow = 2)
+grid.arrange(richplot, shanplot, simpplot, nrow = 2)
 
