@@ -5,32 +5,14 @@ str(datum1)
 ### Load packages
 install.packages("tidyverse")
 library(tidyverse)
+library(sjmisc)
 
-### Format for analysis of planted wildflower richness and density.
+### Format data for iNext
 datum2 <- datum1 %>%
   select(Date, Round, Site, Subplot, Quadrat, ASTU, COTI3, CHFA2, DRAM, GAPU, HEAN2, MOPU, RUHI2) %>%
   filter(Round == "c"|Round == "d"|Round == "e"|Round == "f") %>%
   mutate_at(c(6:13), as.numeric) %>%
-  mutate_at(c(6:13), ~replace_na(.,0)) %>%
-  pivot_longer(cols = ASTU:RUHI2, names_to = "Species", values_to = "Count") %>%
-  group_by(Site, Round, Subplot, Species) %>%
-  summarise(Count=sum(Count)) %>%
-  pivot_wider(names_from = Species, values_from = Count) %>%
-  rowwise() %>%
-  mutate(
-    TotalDens = sum(c_across(ASTU:RUHI2)), # Sums all counts across columns.
-    Richness = sum(c_across(ASTU:RUHI2)!=0) # Counts the frequency of values >0.
-  ) %>%
-  mutate(Row = 
-           case_when(between(Subplot, 1, 4)~1,
-                     between(Subplot, 5, 8)~2,
-                     between(Subplot, 8, 12)~3,
-                     between(Subplot, 13, 16)~4)) %>%
-  mutate(Col = 
-           case_when(Subplot == 4 | Subplot == 8 | Subplot == 12 | Subplot == 16 ~ 1,
-                     Subplot == 3 | Subplot == 7 | Subplot == 11 | Subplot == 15 ~ 2,
-                     Subplot == 2 | Subplot == 6 | Subplot == 10 | Subplot == 14 ~ 3,
-                     Subplot == 1 | Subplot == 5 | Subplot == 9 | Subplot == 13 ~ 4)) %>%
+  mutate_at(c(6:13), ~tidyr::replace_na(.,0)) %>%
   mutate(Treatment =
            case_when(Subplot == 1 & Site == "FCU1" ~ "Disking",
                      Subplot == 2 & Site == "FCU1" ~ "Mowing",
@@ -80,6 +62,106 @@ datum2 <- datum1 %>%
                      Subplot == 14 & Site == "PBU1" ~ "Combo",
                      Subplot == 15 & Site == "PBU1" ~ "Control",
                      Subplot == 16 & Site == "PBU1" ~ "Mowing")) %>%
-  mutate_at(c(16), as.factor) %>%
-  mutate(Treatment = relevel(Treatment, "Control")) %>%
-  mutate_at(c(3), as.factor)
+  pivot_longer(cols = ASTU:RUHI2, names_to = "Species", values_to = "Count") %>%
+  group_by(Treatment, Species) %>%
+  summarise(Count=sum(Count)) %>%
+  pivot_wider(names_from = Species, values_from = Count) %>%
+  rotate_df(cn = TRUE) %>%
+  filter(!row_number() %in% c(1)) %>%
+  mutate_at(c(1:4), as.numeric)
+
+# Install/load the package iNEXT.
+install.packages("devtools")
+install.packages("rlang")
+install_github('AnneChao/iNEXT')
+devtools::install_github("mikeroswell/MeanRarity")
+library(gridExtra)
+library(devtools)
+library(rlang)
+library(iNEXT)
+library(MeanRarity)
+
+# Create a color blindness friendly palette:
+cbp1 <- c("#999999", "#E69F00", "#56B4E9", "#009E73",
+          "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+
+# Rarefaction of hill numbers between treatments:
+
+iNEXT(datum2, q = c(0, 1, 2), datatype = "abundance", nboot = 50, knots = 500) %>%
+  ggiNEXT(facet.var = "Order.q") +
+  theme_classic() +
+  scale_color_manual(values = cbp1)
+
+iNEXT(datum2, q = c(0, 1, 2), datatype = "abundance") %>%
+  ggiNEXT(facet.var = "Assemblage", type = 2) +
+  theme_classic()
+
+flwrdiv$AsyEst
+
+flwrdiv <- iNEXT(datum2, q = c(0, 1, 2), datatype = "abundance", nboot = 50, knots = 500)
+
+## Plot the asymptotic estimates for hill numbers of orders q = 0, 1, 2
+
+# Create new data frames subset by diversity order from the iNEXT object:
+
+flwrasyrich <- flwrdiv$AsyEst %>%
+  as.data.frame() %>%
+  subset(Diversity == "Species richness")
+
+flwrasyshan <- flwrdiv$AsyEst %>%
+  as.data.frame() %>%
+  subset(Diversity == "Shannon diversity")
+
+flwrasysimp <- flwrdiv$AsyEst %>%
+  as.data.frame() %>%
+  subset(Diversity == "Simpson diversity")
+
+# Plot the estimates
+
+richplot <- flwrasyrich %>%
+  mutate_at(c(3:7), as.numeric) %>%
+  mutate_at(c(1:2), as.factor) %>%
+  ggplot(aes(x = Assemblage, y = Estimator, color = Assemblage, shape = Assemblage)) +
+  geom_hline(yintercept = mean(flwrasyrich$Estimator), linetype = 3) +
+  geom_errorbar(aes(ymin = LCL, ymax = UCL, width = 0.15)) +
+  geom_point(aes(size = 3)) +
+  theme_classic() +
+  theme(panel.border = element_rect(color = "black", fill = NA, linewidth = .5)) +
+  guides(size = FALSE, color = "none", shape = "none") +
+  scale_y_continuous(name = "Hill Richness", limits = c(5, 10)) +
+  scale_color_manual(values = cbp1) +
+  scale_shape_manual(values = c(15, 16, 17, 18)) +
+  xlab(NULL)
+  
+shanplot <- flwrasyshan %>%
+  mutate_at(c(3:7), as.numeric) %>%
+  mutate_at(c(1:2), as.factor) %>%
+  ggplot(aes(x = Assemblage, y = Estimator, color = Assemblage, shape = Assemblage)) +
+  geom_hline(yintercept = mean(flwrasyshan$Estimator), linetype = 3) +
+  geom_errorbar(aes(ymin = LCL, ymax = UCL, width = 0.15)) +
+  geom_point(aes(size = 3)) +
+  theme_classic() +
+  theme(panel.border = element_rect(color = "black", fill = NA, linewidth = .5)) +
+  guides(size = FALSE, color = "none", shape = "none") +
+  scale_y_continuous(name = "Hill Shannon", limits = c(3.5, 5)) +
+  scale_color_manual(values = cbp1) +
+  scale_shape_manual(values = c(15, 16, 17, 18)) +
+  xlab(NULL)
+
+simpplot <- flwrasysimp %>%
+  mutate_at(c(3:7), as.numeric) %>%
+  mutate_at(c(1:2), as.factor) %>%
+  ggplot(aes(x = Assemblage, y = Estimator, color = Assemblage, shape = Assemblage)) +
+  geom_hline(yintercept = mean(flwrasysimp$Estimator), linetype = 3) +
+  geom_errorbar(aes(ymin = LCL, ymax = UCL, width = 0.15)) +
+  geom_point(aes(size = 3)) +
+  theme_classic() +
+  theme(panel.border = element_rect(color = "black", fill = NA, linewidth = .5)) +
+  guides(size = FALSE, color = "none", shape = "none") +
+  scale_y_continuous(name = "Hill Simpson", limits = c(3, 4.5)) +
+  scale_color_manual(values = cbp1) +
+  scale_shape_manual(values = c(15, 16, 17, 18)) +
+  xlab(NULL)
+
+grid.arrange(richplot, shanplot,simpplot, nrow = 2)
+
