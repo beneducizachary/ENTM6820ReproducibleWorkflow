@@ -5,6 +5,7 @@ str(datum1)
 ### Load packages
 install.packages("tidyverse")
 library(tidyverse)
+library(gridExtra)
 library(sjmisc)
 
 ### Format data for iNext

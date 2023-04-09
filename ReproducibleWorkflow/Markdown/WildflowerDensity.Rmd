@@ -210,7 +210,7 @@ plot(residuals(lmm))
 
 Didn't help the residuals much. However, it is correctly identifying that there are 3 sites and 48 subplots. The previous lm assumed that there were 192 subplots. We do have singular fit, which is expected when estimating random effects with 3 levels for Site and 4 levels for Subplot. Here, I opt to keep it to avoid pseudoreplication. Moreover, a recent paper showed that including random effects with few levels to specify nesting can only help hypothesis tests.
 
-Clearly the residuals are off, so let's find a better error family:
+It's also important that heirarchical models make the interpretation of raw residual plots problematic. We'll have to turn to DHARMa package for diagnostic residual plots from here on out.
 
 ```{r}
 #install.packages("glmmTMB")
@@ -259,6 +259,7 @@ zinb <- glmmTMB(TotalDens ~ Treatment + (1|Site/Subplot), datum2,
                 family = nbinom2, ziformula = ~1)
 summary(zinb)
 ```
+
 ```{r}
 plot(simulateResiduals(fittedModel = zinb))
 ```
@@ -295,38 +296,98 @@ anova(nb2, nb)
 
 And we get a better fit with the random effects.
 
-For our best model, we'll fit with restricted maximum likelihood, which is more appropriate for small sample sizes.
+Remember that our quick plots of the data show that Round is interacting with counts, which is expected. Therefore, we should consider it's inclusion:
+
+Consider Treatment effects consistent across Rounds:
 
 ```{r}
-nb3 <- glmmTMB(TotalDens ~ Treatment + (1|Site/Subplot), datum2,
-                 family = nbinom2, REML = TRUE)
-summary(nb3)
+nb3 <- glmmTMB(TotalDens ~ Treatment + Round + (1|Site/Subplot), datum2,
+               family = nbinom2)
+plot(simulateResiduals(nb3))
 ```
 
-Let's tidy up the information:
+And now Round modifies the effect of Treatments via an interaction:
 
 ```{r}
-#install.packages("broom.mixed")
-library(broom.mixed)
-
-nb3 %>%
-  broom.mixed::tidy() %>%
-  select(effect, term, estimate, std.error, statistic, p.value)
+nb4 <- glmmTMB(TotalDens ~ Treatment*Round + (1|Site/Subplot), datum2,
+               family = nbinom2)
+plot(simulateResiduals(fittedModel = nb4))
 ```
 
-And get the marginal means:
+And let's compare them to the model without Round:
+
 ```{r}
-#install.packages("emmeans")
-library(emmeans)
+anova(nb, nb3, nb4)
 
-nb3 %>%
-  emmeans("Treatment", type = "response")
 ```
+
+AIC shows that nb3, the model with + Round, fits better than the models without Round and a Treatment*Round interaction, respectively. Additionally, DHARMa diagnotics do not suggest any problems with model fit.
+
+We may expect there to be an interaction of Treatment and Round in the future, but this dataset (where treatment effects should actually not be present) supports the simpler model.
+
+Create a model selection table for all models:
+
+```{r}
+#install.packages("AICcmodavg")
+#install.packages("kimisc")
+library(AICcmodavg)
+library(kimisc)
+
+tibble::lst(pois, nb, zip, zinb, nb2, nb3, nb4) %>%
+  aictab(second.ord = TRUE) %>%
+  as.data.frame()
+
+```
+
+Let's actually look at the results:
+
+```{r}
+#install.packages("ggeffects")
+#install.packages("gridExtra")
+library(ggeffects)
+library(gridExtra)
+nb3emmeans <- ggpredict(nb3)
+nb3emmeans
+
+cbp1 <- c("#999999", "#E69F00", "#56B4E9", "#009E73",
+          "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+
+nb3TreatOut <- as.data.frame(nb3emmeans$Treatment) %>%
+  ggplot(aes(x = x, y = predicted, color = x, shape = x)) +
+  geom_hline(yintercept = mean(nb3emmeans$Treatment$predicted), linetype = 3) +
+  geom_errorbar(aes(ymin = conf.low, ymax = conf.high, width = 0.15)) +
+  geom_point(aes(size = 3)) +
+  theme_classic() +
+  theme(panel.border = element_rect(color = "black", fill = NA, linewidth = .5),
+        axis.text = element_text(color = "black")) +
+  guides(size = FALSE, color = "none", shape = "none") +
+  scale_x_discrete(name = NULL, limits = c("Control", "Mowing", "Disking", "Combo")) +
+  scale_y_continuous(name = bquote('Wildflower density per 10'~m^2)) +
+  scale_color_manual(values = cbp1) +
+  scale_shape_manual(values = c(15, 16, 17, 18))
+
+nb3RoundOut <- as.data.frame(nb3emmeans$Round) %>%
+  ggplot(aes(x = x, y = predicted, color = x, shape = x)) +
+  geom_hline(yintercept = mean(nb3emmeans$Round$predicted), linetype = 3) +
+  geom_errorbar(aes(ymin = conf.low, ymax = conf.high, width = 0.15)) +
+  geom_point(aes(size = 3)) +
+  theme_classic() +
+  theme(panel.border = element_rect(color = "black", fill = NA, linewidth = .5),
+        axis.text = element_text(color = "black")) +
+  guides(size = FALSE, color = "none", shape = "none") +
+  scale_x_discrete(name = NULL) +
+  scale_y_continuous(name = bquote('Wildflower density per 10'~m^2)) +
+  scale_color_manual(values = cbp1) +
+  scale_shape_manual(values = c(15, 16, 17, 18))
+
+grid.arrange(nb3TreatOut, nb3RoundOut, nrow = 1)
+```
+
 #### Question 3
 
-There are no significant differences between any of the groups. Although the effect size of the subplots assigned to mowing are slightly higher before any of the treatments were applied.
+There are no significant differences between any of the treatment groups. Although the effect size of the subplots assigned to mowing are slightly higher before any of the treatments were applied.
 
-There is high variation for these faux-effects, leading to low confidence in estimates. I'm not too surprised, as there is a lot of variation across subplots. This preliminary analysis suggests that there would need to be quite a large difference in effect size between treatments and control to detect an effect, which is slightly worrisome. I'm flirting with trying a spatial autocorrelation model (possibly from package spaMM) or trying a random slopes model once my post-treatment data come in after this field season. I'm not sure how data hungry both of these approaches will be. Looking at tile plots shows a lot of variation across subplots in the same plot, so assessing spatial autocorrelation may make the most sense.
+There is high variation for these faux-effects, leading to low confidence in estimates. I'm not too surprised, as there is a lot of variation across subplots. This preliminary analysis suggests that there would need to be quite a large difference in effect size between treatments and control to detect an effect, which is slightly worrisome. I am thinking a spatial autocorrelation model (by including a CAR term from the spaMM package) with trying a spatial autocorrelation model or trying a random slopes model once my post-treatment data come in after this field season. I'm not sure how data hungry both of these approaches will be. Ultimately, separating the inital differences between subplots or estimating spatial variation should help single out treatment effects.
 
 For sharing these results, an effects plot of the marginal means and their precision from the nb model seems most appropriate. This could also be presented in a table, as there are not many coefficients being estimated. Additionally, an AIC table of the models considered would be good to support model choice.
 
