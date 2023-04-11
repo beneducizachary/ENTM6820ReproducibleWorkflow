@@ -75,12 +75,9 @@ datum2 <- datum1 %>%
 install.packages("devtools")
 install.packages("rlang")
 install_github('AnneChao/iNEXT')
-devtools::install_github("mikeroswell/MeanRarity")
-library(gridExtra)
 library(devtools)
 library(rlang)
 library(iNEXT)
-library(MeanRarity)
 
 # Create a color blindness friendly palette:
 cbp1 <- c("#999999", "#E69F00", "#56B4E9", "#009E73",
