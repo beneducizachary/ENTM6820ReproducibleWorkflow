@@ -351,6 +351,7 @@ library(gridExtra)
 library(MuMIn)
 library(broom.mixed)
 
+# Looking at emmeans from the model. 
 nb3emmeans <- ggpredict(nb3)
 nb3emmeans
 
@@ -388,33 +389,38 @@ nb3RoundOut <- as.data.frame(nb3emmeans$Round) %>%
 grid.arrange(nb3TreatOut, nb3RoundOut, nrow = 1)
 ```
 
-Results as rate ratios:
+Results as rate ratios (my preference):
 
 ```{r}
+# Tidy estimates for the Treatment plot.
 densEstTrt <- broom.mixed::tidy(nb3, conf.int = TRUE) %>%
   mutate(expEstimate = exp(estimate)) %>%
   mutate(expConf.low = exp(conf.low)) %>%
   mutate(expConf.high = exp(conf.high)) %>%
   filter(term == 'TreatmentCombo'|term == 'TreatmentDisking'|term == 'TreatmentMowing')
 
+# Tidy estimates for the Round plot.
 densEstRnd <- broom.mixed::tidy(nb3, conf.int = TRUE) %>%
   mutate(expEstimate = exp(estimate)) %>%
   mutate(expConf.low = exp(conf.low)) %>%
   mutate(expConf.high = exp(conf.high)) %>%
   filter(term == 'Roundd'|term == 'Rounde'|term == 'Roundf')
 
-densEstTrt %>%
+# Plot for Treatment effects.
+densTrtplot <- densEstTrt %>%
   mutate(term = 
            case_when(term == "TreatmentMowing" ~ "Mowing",
                      term == "TreatmentDisking" ~ "Disking",
                      term == "TreatmentCombo" ~ "Combo")) %>%
-  ggplot(aes(x = expEstimate, y = term, color = term, shape = term,
-             label = round(expEstimate, digits = 2))) +
+  ggplot(aes(x = expEstimate, y = term, color = term, shape = term)) +
   geom_errorbar(aes(xmin = expConf.low, xmax = expConf.high, width = 0.15)) +
   geom_vline(xintercept = 1, linetype = 3, size = 1, color = "red") +
   geom_vline(xintercept = mean(densEstTrt$expEstimate), linetype = 3) +
   geom_point(aes(size = 2)) +
-  geom_text() +
+  geom_text(aes(label = paste(round(expEstimate, digits = 2),
+                              "^(", round(p.value, digits = 3), ")", sep = ""),
+                color = NULL, vjust = -1, hjust = -0.000001),
+            parse = TRUE) +
   theme_classic() +
   theme(panel.border = element_rect(color = "black", fill = NA, linewidth = .5),
         axis.text = element_text(color = "black")) +
@@ -425,27 +431,36 @@ densEstTrt %>%
   scale_color_manual(values = c("#E69F00", "#56B4E9", "#009E73")) +
   scale_shape_manual(values = c(16, 17, 18))
 
-densEstRnd %>%
+# Plot for Round effects
+densRndplot <- densEstRnd %>%
   mutate(term = 
-           case_when(term == "Roundd" ~ "Jul/Aug",
+           case_when(term == "Roundd" ~ "July/Aug",
                      term == "Rounde" ~ "Aug/Sept",
                      term == "Roundf" ~ "Oct")) %>%
-  ggplot(aes(x = expEstimate, y = term, color = term, shape = term, label = expEstimate)) +
+  ggplot(aes(x = expEstimate, y = term, color = term, shape = term)) +
   geom_errorbar(aes(xmin = expConf.low, xmax = expConf.high, width = 0.15)) +
   geom_vline(xintercept = 1, linetype = 3, size = 1, color = "red") +
   geom_vline(xintercept = mean(densEstRnd$expEstimate), linetype = 3) +
   geom_point(aes(size = 2)) +
+  geom_text(aes(label = paste(round(expEstimate, digits = 2),
+                              "^(", round(p.value, digits = 3), ")", sep = ""),
+                color = NULL, vjust = -1, hjust = -0.000001),
+            parse = TRUE) +
   theme_classic() +
   theme(panel.border = element_rect(color = "black", fill = NA, linewidth = .5),
         axis.text = element_text(color = "black")) +
   guides(size = FALSE, color = "none", shape = "none") +
-  scale_y_discrete(name = NULL, limits = c("Oct", "Aug/Sept", "Jul/Aug")) +
+  scale_y_discrete(name = NULL, limits = c("Oct", "Aug/Sept", "July/Aug")) +
   scale_x_continuous(name = bquote('Rate ratio of wildflower density per 10'~m^2),
-                     limits = c(0,1.2)) +
-  scale_color_manual(values = c("#F0E442", "#0072B2", "#D55E00")) +
+                     limits = c(0,1)) +
+  scale_color_manual(values = c("#0072B2", "#D55E00", "#CC79A7")) +
   scale_shape_manual(values = c(16, 17, 18))
+
+# Both plots arranged.
+grid.arrange(densTrtplot, densRndplot, nrow = 1)
 ```
 
+Note: p-values for the comparison to the control group are supplied in the superscript. The average of estimates and a rate ratio of 1 (denoting no difference) are presented as grey dotted and red dotted lines, respectively.
 
 #### Question 3
 
