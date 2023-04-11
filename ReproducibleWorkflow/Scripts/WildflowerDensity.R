@@ -234,3 +234,13 @@ glmm2 %>%
 # spatial autocorrelation model (possibly from package spaMM) or trying a random
 # slopes model once my post-treatment data come in after this field season. Not
 # sure about the latter, as this can be quite data hungry.
+
+glmm3 <- glmmTMB(TotalDens ~ Treatment + Round + (1|Site/Subplot), datum2, family = nbinom2)
+summary(glmm3)
+plot(simulateResiduals(glmm3))
+
+anova(glmm2, glmm3)
+
+emmeans(glmm3, specs = c("Treatment"), type = "response")
+
+

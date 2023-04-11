@@ -1,0 +1,12 @@
+---
+title: "Diversity Estimation"
+author: "Zachary Beneduci"
+date: "2023-04-10"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+The package iNEXT will be used to estimate the diversity of wildflower assemblages between treatments. The function iNEXT is used to estimate rarefaction curves on orders of diversity (or hill numbers) denoted by q = 0, 1, 2. These correspond to the familar richness, shannon diversity, and simpon diversity indices, but are given in "effective number of species". In other words, the number of species that would be present in a similar community composed of species will equal abundance ranks. Rarefaction curves can be useful when comparing samples with different library sizes (i.e. the number of individuals sampled). Assemblages often vary in the abundance distribution of their species. Wide distributions tend to have many rare species that are harder to detect, many being missed entirely from standardized collection methods. Rarefaction curves may be plotted and diversities compared at a shared library size to help pvercome this problem. 
