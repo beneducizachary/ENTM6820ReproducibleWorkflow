@@ -6,7 +6,8 @@ This project is an example analysis of data collected as part of the Best Manage
 
 ## Sections
 
-[Data](https://github.com/beneducizachary/ENTM6820ReproducibleWorkflow/tree/main/Data)
+### Data
+- [Data Files](https://github.com/beneducizachary/ENTM6820ReproducibleWorkflow/tree/main/Data)
 
 ### Analysis
 - [Wildflower Density](https://github.com/beneducizachary/ENTM6820ReproducibleWorkflow/blob/main/Markdown/WildflowerDensity.Rmd)
