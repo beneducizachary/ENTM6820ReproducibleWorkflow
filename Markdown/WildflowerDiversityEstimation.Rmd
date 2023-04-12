@@ -207,8 +207,9 @@ simpplot <- flwrasysimp %>%
 
 grid.arrange(richplot, shanplot, simpplot, nrow = 1)
 
-g1 <- arrangeGrob(richplot, shanplot, simpplot, nrow = 1)
-ggsave(path = "Figures", filename = "TrtDivFig.png", plot = g1, width = 8, height = 4)
+# Only need this if exporting:
+#g1 <- arrangeGrob(richplot, shanplot, simpplot, nrow = 1)
+#ggsave(path = "Figures", filename = "TrtDivFig.png", plot = g1, width = 8, height = 4)
   
 ```
 
@@ -358,8 +359,9 @@ simpplotSite <- flwrasysimpSite %>%
 
 grid.arrange(richplotSite, shanplotSite, simpplotSite, nrow = 1)
 
-g2 <- arrangeGrob(richplotSite, shanplotSite, simpplotSite, nrow = 1)
-ggsave(path = "Figures", filename = "SiteDivFig.png", plot = g2, width = 8, height = 4)
+# Only need this if exporting:
+#g2 <- arrangeGrob(richplotSite, shanplotSite, simpplotSite, nrow = 1)
+#ggsave(path = "Figures", filename = "SiteDivFig.png", plot = g2, width = 8, height = 4)
 ```
 
 Run rarefaction of hill numbers between rounds:
@@ -423,7 +425,7 @@ datum4 <- datum1 %>%
                      Subplot == 16 & Site == "PBU1" ~ "Mowing")) %>%
   pivot_longer(cols = ASTU:RUHI2, names_to = "Species", values_to = "Count") %>%
   mutate(Round = 
-           case_when(Round == "c" ~ "June",
+           case_when(Round == "c" ~ "June/July",
                      Round == "d" ~ "July/Aug",
                      Round == "e" ~ "Aug/Sept",
                      Round == "f" ~ "Oct")) %>%
@@ -472,7 +474,7 @@ richplotRound <- flwrasyrichRound %>%
         axis.text = element_text(color = "black")) +
   guides(size = FALSE, color = "none", shape = "none") +
   scale_y_continuous(name = "Hill Richness", limits = c(0,10)) +
-  scale_x_discrete(name = NULL, limits = c("June", "July/Aug", "Aug/Sept", "Oct")) +
+  scale_x_discrete(name = NULL, limits = c("June/July", "July/Aug", "Aug/Sept", "Oct")) +
   scale_color_manual(values = c("#F0E442", "#0072B2", "#D55E00", "#CC79A7")) +
   scale_shape_manual(values = c(15, 16, 17, 18)) +
   xlab(NULL)
@@ -489,7 +491,7 @@ shanplotRound <- flwrasyshanRound %>%
         axis.text = element_text(color = "black")) +
   guides(size = FALSE, color = "none", shape = "none") +
   scale_y_continuous(name = "Hill Shannon", limits = c(0,10)) +
-  scale_x_discrete(name = NULL, limits = c("June", "July/Aug", "Aug/Sept", "Oct")) +
+  scale_x_discrete(name = NULL, limits = c("June/July", "July/Aug", "Aug/Sept", "Oct")) +
   scale_color_manual(values = c("#F0E442", "#0072B2", "#D55E00", "#CC79A7")) +
   scale_shape_manual(values = c(15, 16, 17, 18)) +
   xlab(NULL)
@@ -506,14 +508,15 @@ simpplotRound <- flwrasysimpRound %>%
         axis.text = element_text(color = "black")) +
   guides(size = FALSE, color = "none", shape = "none") +
   scale_y_continuous(name = "Hill Simpson", limits = c(0,10)) +
-  scale_x_discrete(name = NULL, limits = c("June", "July/Aug", "Aug/Sept", "Oct")) +
+  scale_x_discrete(name = NULL, limits = c("June/July", "July/Aug", "Aug/Sept", "Oct")) +
   scale_color_manual(values = c("#F0E442", "#0072B2", "#D55E00", "#CC79A7")) +
   scale_shape_manual(values = c(15, 16, 17, 18)) +
   xlab(NULL)
 
 grid.arrange(richplotRound, shanplotRound, simpplotRound, nrow = 1)
 
-g3 <- arrangeGrob(richplotRound, shanplotRound, simpplotRound, nrow = 1)
-ggsave(path = "Figures", filename = "RoundDivFig.png", plot = g3, width = 8, height = 4)
+# Only need this if exporting:
+#g3 <- arrangeGrob(richplotRound, shanplotRound, simpplotRound, nrow = 1)
+#ggsave(path = "Figures", filename = "RoundDivFig.png", plot = g3, width = 8, height = 4)
 ```
 
