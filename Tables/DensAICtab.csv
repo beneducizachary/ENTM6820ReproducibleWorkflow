@@ -1,0 +1,8 @@
+"","Formula","Family","AICc","Delta_AICc","K","AICcWt"
+"6","Density ~ Treatment + Round + (1|Plot/Subplot)","neg.binom",1361.20673855235,0,10,0.999383989121292
+"7","Density ~ Treatment*Round + (1|Plot/Subplot)","neg.binom",1376.03152191669,14.8247833643347,19,0.000603353146831979
+"2","Density ~ Treatment + (1|Plot/Subplot)","neg.binom",1384.36198242059,23.1552438682368,7,9.36774516444233e-06
+"4","Density ~ Treatment + (1|Plot/Subplot)","zero.inf.neg.binom",1386.54017212318,25.3334335708203,8,3.15244257144901e-06
+"5","Density ~ Treatment","neg.binom",1392.80414805803,31.5974095056777,5,1.37544139950908e-07
+"3","Density ~ Treatment + (1|Plot/Subplot","zero.inf.pois",2848.87606791684,1487.66932936449,7,9.88131291682493e-324
+"1","Density ~ Treatment + (1|Plot/Subplot","pois",3216.90540815491,1855.69866960256,6,0

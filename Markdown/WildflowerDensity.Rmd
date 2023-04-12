@@ -1,7 +1,7 @@
 ---
-title: "Statistics Homework"
+title: "Effect of treatments on wildflower density"
 author: "Zachary Beneduci"
-date: "2023-04-06"
+date: "2023-04-011"
 output: html_document
 ---
 
@@ -9,13 +9,11 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-#### Question 1
+##### Overview
 
-Please describe the data you are using for your project in a couple sentences. What type of data is it and what does it look like? What are the objectives and hypotheses of your project? How do you plan to test this hypothesis (what types of statistics)?
+The data were collected from three experimental plots established at the E.V. Smith research center in Shorter, AL. In each plot (named BEU1, FCU1, and PBU1), 16 subplots of 42 x 24 ft^2 were planted with a 20 species wildflower seed mix in spring 2022. Subplots were assigned to four groups (mowing, light-disking, their combination, and control) balanced within and across plots. These treatments were applied in fall 2022. Pre-treatment wildflower counts were collected six times (rounds) throughout the 2022 field season in each subplot from 10 randomly placed 1.25 x 0.8 m^2 quadrats. The objective of the project is to determine the effect of mowing, disking, and the combination on wildflower density, diversity, and community composition. I'll test the hypothesis that wildflower density does not differ between treatments and the control (which we would hope for, since the treatments were not applied yet!). To do this, I will consider several variations of linear models to compare differences between each treatment to the control group. Therefore, beta estimates from regression and their associated measures of precision, will be assessed.
 
-The data were collected from three experimental plots established at the E.V. Smith research center in Shorter, AL. In each plot (named BEU1, FCU1, and PBU1), 16 subplots of 42 x 24 ft^2 were planted with a 20 species wildflower seed mix in spring 2022. Subplots were assigned to four groups (mowing, light-disking, their combination, and control) balanced within and across fields. These treatments were applied in fall 2022. Pre-treatment wildflower counts were collected six times (rounds) throughout the 2022 field season in each subplot from 10 randomly placed 1.25 x 0.8 m^2 quadrats. The objective of the project is to determine the effect of mowing, disking, and the combination on wildflower density, diversity, and community composition. For this assignment, I'll test the hypothesis that wildflower density does not differ between treatments and the control (which we would hope for, since the treatments were not applied yet!). To do this, I will consider several variations of linear models to compare differences between each treatment to the control group. Therefore, beta estimates from regression and their associated measures of precision, will be assessed.
-
-#### Question 2
+##### Data Preparation
 
 Load the dataset:
 
@@ -40,7 +38,7 @@ Note: Site and Plot (as referred to above) are synonymous.
 datum2 <- datum1 %>%
   # Select relevant grouping variables and the planted species with counts > 0.
   select(Date, Round, Site, Subplot, Quadrat, ASTU, COTI3, CHFA2, DRAM, GAPU, HEAN2, MOPU, RUHI2) %>%
-  # Filter out sampling rounds 'a' and 'b'. There were no planted wildflowers.
+  # Filter out sampling rounds 'a' and 'b'. We did not detect any planted wildflowers in these rounds.
   filter(Round == "c"|Round == "d"|Round == "e"|Round == "f") %>%
   # Making sure counts are considered numbers.
   mutate_at(c(6:13), as.numeric) %>%
@@ -71,7 +69,7 @@ datum2 <- datum1 %>%
                      Subplot == 3 | Subplot == 7 | Subplot == 11 | Subplot == 15 ~ 2,
                      Subplot == 2 | Subplot == 6 | Subplot == 10 | Subplot == 14 ~ 3,
                      Subplot == 1 | Subplot == 5 | Subplot == 9 | Subplot == 13 ~ 4)) %>%
-  # Finally, we'll add the treatment information.
+  # We'll add the treatment information.
   mutate(Treatment =
            case_when(Subplot == 1 & Site == "FCU1" ~ "Disking",
                      Subplot == 2 & Site == "FCU1" ~ "Mowing",
@@ -172,6 +170,7 @@ ggplot(datum2, aes(x = TotalDens)) +
   geom_histogram(bins = 140)
 ```
 
+##### Analysis
 Our response is at least non-Gaussian. Hard to tell if the residuals are without modeling.
 
 Of note is that subplots were sampled four times throughout the 2022 season. For the Treatment effects (of interest here), we would commit pseudoreplication if each time point is treated as an independent measurement. Additionally, subplots at the same site are not independent, so we'll need to
@@ -210,7 +209,7 @@ plot(residuals(lmm))
 
 Didn't help the residuals much. However, it is correctly identifying that there are 3 sites and 48 subplots. The previous lm assumed that there were 192 subplots. We do have singular fit, which is expected when estimating random effects with 3 levels for Site and 4 levels for Subplot. Here, I opt to keep it to avoid pseudoreplication. Moreover, a recent paper showed that including random effects with few levels to specify nesting can only help hypothesis tests.
 
-It's also important that heirarchical models make the interpretation of raw residual plots problematic. We'll have to turn to DHARMa package for diagnostic residual plots from here on out.
+It's also important to note that hierarchical models make the interpretation of raw residual plots problematic. We'll have to turn to DHARMa package for diagnostic residual plots from here on out.
 
 ```{r}
 #install.packages("glmmTMB")
@@ -333,11 +332,34 @@ Create a model selection table for all models:
 library(AICcmodavg)
 library(kimisc)
 
-tibble::lst(pois, nb, zip, zinb, nb2, nb3, nb4) %>%
+DensAICtab <- tibble::lst(pois, nb, zip, zinb, nb2, nb3, nb4) %>%
   aictab(second.ord = TRUE) %>%
-  as.data.frame()
+  as.data.frame() %>%
+  mutate(Formula = 
+           case_when(Modnames == "nb3" ~ "Density ~ Treatment + Round + (1|Plot/Subplot)",
+                     Modnames == "nb4" ~ "Density ~ Treatment*Round + (1|Plot/Subplot)",
+                     Modnames == "nb" ~ "Density ~ Treatment + (1|Plot/Subplot)",
+                     Modnames == "zinb" ~ "Density ~ Treatment + (1|Plot/Subplot)",
+                     Modnames == "nb2" ~ "Density ~ Treatment",
+                     Modnames == "zip" ~ "Density ~ Treatment + (1|Plot/Subplot",
+                     Modnames == "pois" ~ "Density ~ Treatment + (1|Plot/Subplot")) %>%
+  mutate(Family =
+           case_when(Modnames == "nb3" ~ "neg.binom",
+                     Modnames == "nb4" ~ "neg.binom",
+                     Modnames == "nb" ~ "neg.binom",
+                     Modnames == "zinb" ~ "zero.inf.neg.binom",
+                     Modnames == "nb2" ~ "neg.binom",
+                     Modnames == "zip" ~ "zero.inf.pois",
+                     Modnames == "pois" ~ "pois")) %>%
+  select(Formula, Family, AICc, Delta_AICc, K, AICcWt)
 
+DensAICtab
+
+# For exporting only:
+#write.csv(DensAICtab, file = "C:/Classes/ENTM6280/Workflow/ENTM6820ReproducibleWorkflow/Tables/DensAICtab.csv")
 ```
+
+##### Results/Summary
 
 Let's actually look at the results:
 
@@ -460,14 +482,12 @@ densRndplot <- densEstRnd %>%
 grid.arrange(densTrtplot, densRndplot, nrow = 1)
 ```
 
-Note: p-values for the comparison to the control group are supplied in the superscript. The average of estimates and a rate ratio of 1 (denoting no difference) are presented as grey dotted and red dotted lines, respectively.
+Note: p-values for the comparison of treatments to control the control group (left) and survey rounds to the June group (right) are supplied in the superscript. The the average of beta estimates and a rate ratio of 1 (denoting no difference) are presented as grey dotted and red dotted lines, respectively.
 
-#### Question 3
+##### Interpretation
 
-There are no significant differences between any of the treatment groups. Although the effect size of the subplots assigned to mowing are slightly higher before any of the treatments were applied.
+In terms of treatment effects, there are no significant differences between any of the treatment groups. Although the effect size of the subplots assigned to mowing are slightly higher before any of the treatments were applied. Mowing has, on average, 1.2 (0.76 - 1.92, LCL - UCL) times as many wildflowers per 10 m^2 compared to the control plots. However, this was not statistically significant (p = 0.42). This is really estimating the effect of at the time arbitray subplot groupings as the treatments were not applied. So it's really just subplot variation.
 
-There is high variation for these faux-effects, leading to low confidence in estimates. I'm not too surprised, as there is a lot of variation across subplots. This preliminary analysis suggests that there would need to be quite a large difference in effect size between treatments and control to detect an effect, which is slightly worrisome. I am thinking a spatial autocorrelation model (by including a CAR term from the spaMM package) with trying a spatial autocorrelation model or trying a random slopes model once my post-treatment data come in after this field season. I'm not sure how data hungry both of these approaches will be. Ultimately, separating the inital differences between subplots or estimating spatial variation should help single out treatment effects.
+There is high variation for these faux-effects, leading to low confidence in estimates. I'm not too surprised, as there is a lot of variation across subplots. This preliminary analysis suggests that there would need to be quite a large difference in effect size between treatments and control to detect an effect, which is slightly worrisome. I am thinking about trying a spatial autocorrelation model (such as a conditional autoregressive) or a random slopes model once my post-treatment data come in after this field season. I'm not sure how data hungry both of these approaches will be. Ultimately, separating the inital differences between subplots or estimating spatial variation should help single out treatment effects.
 
-For sharing these results, an effects plot of the marginal means and their precision from the nb model seems most appropriate. This could also be presented in a table, as there are not many coefficients being estimated. Additionally, an AIC table of the models considered would be good to support model choice.
-
-I am planning to present a pre-treatment analysis for wildflower diversity and community composition. My plan is to use package iNEXT for rarefaction of effective number of species based on hill numbers and permanova results, respectively. Still figuring out that code.
+For sharing these results, an effects plot of the marginal means and their precision from the nb model seems most appropriate. I think it's easier to visualize the beta coefficients and their variation in an effects plot. Additionally, an AIC table of the models considered would be good to support model choice.
