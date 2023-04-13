@@ -517,6 +517,6 @@ grid.arrange(richplotRound, shanplotRound, simpplotRound, nrow = 1)
 
 # Only need this if exporting:
 #g3 <- arrangeGrob(richplotRound, shanplotRound, simpplotRound, nrow = 1)
-#ggsave(path = "Figures", filename = "RoundDivFig.png", plot = g3, width = 8, height = 4)
+#ggsave(path = "Figures", filename = "RoundDivFig.png", plot = g3, width = 9, height = 4)
 ```
 
