@@ -473,7 +473,7 @@ richplotRound <- flwrasyrichRound %>%
   theme(panel.border = element_rect(color = "black", fill = NA, linewidth = .5),
         axis.text = element_text(color = "black")) +
   guides(size = FALSE, color = "none", shape = "none") +
-  scale_y_continuous(name = "Hill Richness", limits = c(0,10)) +
+  scale_y_continuous(name = "Hill Richness", limits = c(1,9)) +
   scale_x_discrete(name = NULL, limits = c("June/July", "July/Aug", "Aug/Sept", "Oct")) +
   scale_color_manual(values = c("#F0E442", "#0072B2", "#D55E00", "#CC79A7")) +
   scale_shape_manual(values = c(15, 16, 17, 18)) +
@@ -490,7 +490,7 @@ shanplotRound <- flwrasyshanRound %>%
   theme(panel.border = element_rect(color = "black", fill = NA, linewidth = .5),
         axis.text = element_text(color = "black")) +
   guides(size = FALSE, color = "none", shape = "none") +
-  scale_y_continuous(name = "Hill Shannon", limits = c(0,10)) +
+  scale_y_continuous(name = "Hill Shannon", limits = c(1,9)) +
   scale_x_discrete(name = NULL, limits = c("June/July", "July/Aug", "Aug/Sept", "Oct")) +
   scale_color_manual(values = c("#F0E442", "#0072B2", "#D55E00", "#CC79A7")) +
   scale_shape_manual(values = c(15, 16, 17, 18)) +
@@ -507,7 +507,7 @@ simpplotRound <- flwrasysimpRound %>%
   theme(panel.border = element_rect(color = "black", fill = NA, linewidth = .5),
         axis.text = element_text(color = "black")) +
   guides(size = FALSE, color = "none", shape = "none") +
-  scale_y_continuous(name = "Hill Simpson", limits = c(0,10)) +
+  scale_y_continuous(name = "Hill Simpson", limits = c(1,9)) +
   scale_x_discrete(name = NULL, limits = c("June/July", "July/Aug", "Aug/Sept", "Oct")) +
   scale_color_manual(values = c("#F0E442", "#0072B2", "#D55E00", "#CC79A7")) +
   scale_shape_manual(values = c(15, 16, 17, 18)) +
