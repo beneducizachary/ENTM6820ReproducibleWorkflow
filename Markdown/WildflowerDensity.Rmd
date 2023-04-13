@@ -445,11 +445,14 @@ densTrtplot <- densEstTrt %>%
             parse = TRUE) +
   theme_classic() +
   theme(panel.border = element_rect(color = "black", fill = NA, linewidth = .5),
-        axis.text = element_text(color = "black")) +
+        axis.text = element_text(color = "black"),
+        axis.text.y = element_text(size = 12),
+        axis.text.x = element_text(size = 10),
+        axis.title = element_text(size = 12)) +
   guides(size = FALSE, color = "none", shape = "none") +
   scale_y_discrete(name = NULL, limits = c("Combo", "Disking", "Mowing")) +
-  scale_x_continuous(name = bquote('Rate ratio of wildflower density per 10'~m^2),
-                     limits = c(.5,2)) +
+  scale_x_continuous(limits = c(.5,2)) +
+  xlab(label = 'Rate ratio of wildflower density per 10' ~m^2) +
   scale_color_manual(values = c("#E69F00", "#56B4E9", "#009E73")) +
   scale_shape_manual(values = c(16, 17, 18))
 
@@ -470,16 +473,23 @@ densRndplot <- densEstRnd %>%
             parse = TRUE) +
   theme_classic() +
   theme(panel.border = element_rect(color = "black", fill = NA, linewidth = .5),
-        axis.text = element_text(color = "black")) +
+        axis.text = element_text(color = "black"),
+        axis.text.y = element_text(size = 12),
+        axis.text.x = element_text(size = 10),
+        axis.title = element_text(size = 12)) +
   guides(size = FALSE, color = "none", shape = "none") +
   scale_y_discrete(name = NULL, limits = c("Oct", "Aug/Sept", "July/Aug")) +
-  scale_x_continuous(name = bquote('Rate ratio of wildflower density per 10'~m^2),
-                     limits = c(0,1)) +
+  scale_x_continuous(limits = c(0,1)) +
+  xlab(label = 'Rate ratio of wildflower density per 10' ~m^2) +
   scale_color_manual(values = c("#0072B2", "#D55E00", "#CC79A7")) +
   scale_shape_manual(values = c(16, 17, 18))
 
 # Both plots arranged.
 grid.arrange(densTrtplot, densRndplot, nrow = 1)
+
+# Only need this if exporting:
+g <- arrangeGrob(densTrtplot, densRndplot, nrow = 1)
+ggsave(path = "Figures", filename = "DensFig.png", plot = g, width = 8, height = 4)
 ```
 
 Note: p-values for the comparison of treatments to control the control group (left) and survey rounds to the June group (right) are supplied in the superscript. The the average of beta estimates and a rate ratio of 1 (denoting no difference) are presented as grey dotted and red dotted lines, respectively.
