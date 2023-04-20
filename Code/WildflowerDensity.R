@@ -4,7 +4,7 @@ datum1 <- read.csv("https://raw.githubusercontent.com/beneducizachary/ENTM6820/m
 str(datum1)
 
 ### Load packages
-install.packages("tidyverse")
+#install.packages("tidyverse")
 library(tidyverse)
 
 ### Format for analysis of planted wildflower richness and density.
@@ -175,6 +175,8 @@ plot(residuals(lmm))
 # of raw residual plots problematic. We'll have to turn to DHARMa package for 
 # diagnostic residual plots from here on out.
 
+#install.packages("glmmTMB")
+#install.packages("DHARMa")
 library(glmmTMB) # A useful package for fitting generalized linear mixed models.
 library(DHARMa) # A package of diagnostic functions for such models.
 
@@ -349,11 +351,11 @@ nb3RoundOut <- as.data.frame(nb3emmeans$Round) %>%
   scale_shape_manual(values = c(15, 16, 17, 18))
 
 grid.arrange(nb3TreatOut, nb3RoundOut, nrow = 1)
-```
 
-Results as rate ratios (my preference):
+
+# Results as rate ratios (my preference):
   
-  ```{r}
+
 # Tidy estimates for the Treatment plot.
 densEstTrt <- broom.mixed::tidy(nb3, conf.int = TRUE) %>%
   mutate(expEstimate = exp(estimate)) %>%
@@ -428,8 +430,8 @@ densRndplot <- densEstRnd %>%
 grid.arrange(densTrtplot, densRndplot, nrow = 1)
 
 # Only need this if exporting:
-#g <- arrangeGrob(densTrtplot, densRndplot, nrow = 1)
-#ggsave(path = "Figures", filename = "DensFig.png", plot = g, width = 8, height = 4)
+g <- arrangeGrob(densTrtplot, densRndplot, nrow = 1)
+ggsave(path = "Figures", filename = "DensFig.png", plot = g, width = 8, height = 4)
 
 # Note: p-values for the comparison of treatments to control the control
 # group (left) and survey rounds to the June group (right) are supplied in the

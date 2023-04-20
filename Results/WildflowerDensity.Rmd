@@ -487,8 +487,8 @@ densRndplot <- densEstRnd %>%
 grid.arrange(densTrtplot, densRndplot, nrow = 1)
 
 # Only need this if exporting:
-g <- arrangeGrob(densTrtplot, densRndplot, nrow = 1)
-ggsave(path = "Figures", filename = "DensFig.png", plot = g, width = 8, height = 4)
+#g <- arrangeGrob(densTrtplot, densRndplot, nrow = 1)
+#ggsave(path = "Figures", filename = "DensFig.png", plot = g, width = 8, height = 4)
 ```
 
 Note: p-values for the comparison of treatments to control the control group (left) and survey rounds to the June group (right) are supplied in the superscript. The the average of beta estimates and a rate ratio of 1 (denoting no difference) are presented as grey dotted and red dotted lines, respectively.

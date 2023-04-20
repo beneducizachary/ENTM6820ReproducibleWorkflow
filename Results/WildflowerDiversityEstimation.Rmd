@@ -32,7 +32,7 @@ library(gridExtra)
 library(sjmisc)
 ```
 
-Format the data:
+Format the data by treatment:
 
 ```{r}
 datum2 <- datum1 %>%
@@ -215,7 +215,7 @@ grid.arrange(richplot, shanplot, simpplot, nrow = 1)
 
 Run rarefaction of hill numbers between sites:
 
-Summarise by site:
+Summarize by site:
 
 ```{r}
 datum3 <- datum1 %>%
@@ -366,7 +366,7 @@ grid.arrange(richplotSite, shanplotSite, simpplotSite, nrow = 1)
 
 Run rarefaction of hill numbers between rounds:
 
-Summarise by round:
+Summarize by round:
 
 ```{r}
 datum4 <- datum1 %>%
