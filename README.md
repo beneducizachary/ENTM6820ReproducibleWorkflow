@@ -9,11 +9,21 @@ This project is an example analysis of data collected as part of the Best Manage
 ### Data
 - [Data Files](https://github.com/beneducizachary/ENTM6820ReproducibleWorkflow/tree/main/Data)
 
-### Analysis
-- [Wildflower Density](https://github.com/beneducizachary/ENTM6820ReproducibleWorkflow/blob/main/Markdown/WildflowerDensity.Rmd)
-- [Wildflower Diversity](https://github.com/beneducizachary/ENTM6820ReproducibleWorkflow/blob/main/Markdown/WildflowerDiversityEstimation.Rmd)
-- [Wildflower Community Composition (WIP)](https://github.com/beneducizachary/ENTM6820ReproducibleWorkflow/blob/main/Markdown/WildflowerCommunityComposition.Rmd)
-
-### Outputs
-- [Figures](https://github.com/beneducizachary/ENTM6820ReproducibleWorkflow/tree/main/Markdown/Figures)
-- [Tables](https://github.com/beneducizachary/ENTM6820ReproducibleWorkflow/tree/main/Tables)
+### Wildflower Density Analysis
+- [Wildflower Density Results](https://github.com/beneducizachary/ENTM6820ReproducibleWorkflow/tree/main/Results)
+  - [Density Code](https://github.com/beneducizachary/ENTM6820ReproducibleWorkflow/blob/main/Code/WildflowerDensity.R)
+  - [Density Markdown](https://github.com/beneducizachary/ENTM6820ReproducibleWorkflow/blob/main/Results/WildflowerDensity.Rmd)
+  - [Density html](https://rawgit.com/beneducizachary/ENTM6820ReproducibleWorkflow/blob/main/Results/WildflowerDensity.html)
+- Outputs
+  - [Density Figure](https://github.com/beneducizachary/ENTM6820ReproducibleWorkflow/blob/main/Figures/DensFig.png)
+  - [Density AIC Table](https://github.com/beneducizachary/ENTM6820ReproducibleWorkflow/tree/main/Tables)
+  
+### Wildflower Diversity Analysis
+- [Wildflower Diversity Results]()
+  - [Diversity Code](https://github.com/beneducizachary/ENTM6820ReproducibleWorkflow/blob/main/Code/DiversityEstimation.R)
+  - [Diversity Markdown](https://github.com/beneducizachary/ENTM6820ReproducibleWorkflow/blob/main/Results/WildflowerDiversityEstimation.Rmd)
+  - [Diversity html](https://rawgit.com/beneducizachary/ENTM6820ReproducibleWorkflow/blob/main/Results/WildflowerDiversityEstimation.html)
+- [Figures]
+  - [Treatment Diversity](https://github.com/beneducizachary/ENTM6820ReproducibleWorkflow/blob/main/Figures/TrtDivFig.png)
+  - [Site Diversity](https://github.com/beneducizachary/ENTM6820ReproducibleWorkflow/blob/main/Figures/SiteDivFig.png)
+  - [Round Diversity](https://github.com/beneducizachary/ENTM6820ReproducibleWorkflow/blob/main/Figures/RoundDivFig.png)
