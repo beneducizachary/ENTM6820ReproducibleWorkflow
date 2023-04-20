@@ -23,7 +23,7 @@ This project is an example analysis of data collected as part of the Best Manage
   - [Diversity Code](https://github.com/beneducizachary/ENTM6820ReproducibleWorkflow/blob/main/Code/DiversityEstimation.R)
   - [Diversity Markdown](https://github.com/beneducizachary/ENTM6820ReproducibleWorkflow/blob/main/Results/WildflowerDiversityEstimation.Rmd)
   - [Diversity html](https://rawgit.com/beneducizachary/ENTM6820ReproducibleWorkflow/blob/main/Results/WildflowerDiversityEstimation.html)
-- [Figures]
+- Figures
   - [Treatment Diversity](https://github.com/beneducizachary/ENTM6820ReproducibleWorkflow/blob/main/Figures/TrtDivFig.png)
   - [Site Diversity](https://github.com/beneducizachary/ENTM6820ReproducibleWorkflow/blob/main/Figures/SiteDivFig.png)
   - [Round Diversity](https://github.com/beneducizachary/ENTM6820ReproducibleWorkflow/blob/main/Figures/RoundDivFig.png)
