@@ -1,4 +1,3 @@
-#### Exploratory script for workflow
 
 ### Load data set
 datum1 <- read.csv("https://raw.githubusercontent.com/beneducizachary/ENTM6820/main/ReproducibleWorkflow/Data/BMPvegDataRawZB7.csv")
