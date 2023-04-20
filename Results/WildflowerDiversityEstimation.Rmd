@@ -520,3 +520,12 @@ grid.arrange(richplotRound, shanplotRound, simpplotRound, nrow = 1)
 #ggsave(path = "Figures", filename = "RoundDivFig.png", plot = g3, width = 9, height = 4)
 ```
 
+Note: The lower 95% confidence limit for richness estimates match the point estimate, as richness could not be lower than that which was observed.
+
+##### Interpretation
+
+We do see the highest richness of planted wildflowers in the mowing treatment and the lowest in the combination treatment. However, shannon and simpson index are relatively similar across treatment groups, suggesting that any differences are really driven by the rarer species in the dataset.
+
+Site and Round seem to be exhibiting stronger effects on planted wildflower diversity compared to the treatments. For the former, Plant Breeding Unit 1 (PBU1) stands out as having lower diversity across all orders of q. For the latter, the late season sampling event (October) stands out as having higher diversity across all orders of q. These are both expected results, as PBU1 had a considerable problem with volunteer weeds and october is a typical time of high wildflower abundance and richness.
+
+Of course, this is a pre-treatment dataset. Therefore, I am expecting these results, and the accompanying analysis, to change.
