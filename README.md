@@ -19,7 +19,7 @@ Wildflower density at the subplot level was calculated (per 10 m^2) and subplots
 - [Wildflower Density Results](https://github.com/beneducizachary/ENTM6820ReproducibleWorkflow/tree/main/Results)
   - [Density Code](https://github.com/beneducizachary/ENTM6820ReproducibleWorkflow/blob/main/Code/WildflowerDensity.R)
   - [Density Markdown](https://github.com/beneducizachary/ENTM6820ReproducibleWorkflow/blob/main/Results/WildflowerDensity.Rmd)
-  - [Density html](https://rawgit.com/beneducizachary/ENTM6820ReproducibleWorkflow/blob/main/Results/WildflowerDensity.html)
+  - [Density html](https://github.com/beneducizachary/ENTM6820ReproducibleWorkflow/blob/main/Results/WildflowerDensity.html)
 - Outputs
   - [Density Figure](https://github.com/beneducizachary/ENTM6820ReproducibleWorkflow/blob/main/Figures/DensFig.png)
   - [Density AIC Table](https://github.com/beneducizachary/ENTM6820ReproducibleWorkflow/tree/main/Tables)
@@ -31,7 +31,7 @@ The effect of treatments on wildflower density was investigated. Asymptotic esti
 - [Wildflower Diversity Results]()
   - [Diversity Code](https://github.com/beneducizachary/ENTM6820ReproducibleWorkflow/blob/main/Code/DiversityEstimation.R)
   - [Diversity Markdown](https://github.com/beneducizachary/ENTM6820ReproducibleWorkflow/blob/main/Results/WildflowerDiversityEstimation.Rmd)
-  - [Diversity html](https://rawgit.com/beneducizachary/ENTM6820ReproducibleWorkflow/blob/main/Results/WildflowerDiversityEstimation.html)
+  - [Diversity html](https://github.com/beneducizachary/ENTM6820ReproducibleWorkflow/blob/main/Results/WildflowerDiversityEstimation.html)
 - Figures
   - [Treatment Diversity](https://github.com/beneducizachary/ENTM6820ReproducibleWorkflow/blob/main/Figures/TrtDivFig.png)
   - [Site Diversity](https://github.com/beneducizachary/ENTM6820ReproducibleWorkflow/blob/main/Figures/SiteDivFig.png)
