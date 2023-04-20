@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ##### Overview
 
-The data were collected from three experimental plots established at the E.V. Smith research center in Shorter, AL. In each plot (named BEU1, FCU1, and PBU1), 16 subplots of 42 x 24 ft^2 were planted with a 20 species wildflower seed mix in spring 2022. Subplots were assigned to four groups (mowing, light-disking, their combination, and control) balanced within and across plots. These treatments were applied in fall 2022. Pre-treatment wildflower counts were collected six times (rounds) throughout the 2022 field season in each subplot from 10 randomly placed 1.25 x 0.8 m^2 quadrats. The objective of the project is to determine the effect of mowing, disking, and the combination on wildflower density, diversity, and community composition. I'll test the hypothesis that wildflower density does not differ between treatments and the control (which we would hope for, since the treatments were not applied yet!). To do this, I will consider several variations of linear models to compare differences between each treatment to the control group. Therefore, beta estimates from regression and their associated measures of precision, will be assessed.
+The data were collected from three experimental plots established at the E.V. Smith research center in Shorter, AL. In each plot (named BEU1, FCU1, and PBU1), 16 subplots of 42 x 24 ft^2 were planted with a 20 species wildflower seed mix in spring 2022. Subplots were assigned to four groups (mowing, light-disking, their combination, and control) balanced within and across plots. These treatments were applied in fall 2022. Pre-treatment wildflower counts were collected six times (rounds) throughout the 2022 field season in each subplot from 10 randomly placed 1.25 x 0.8 m^2 quadrats. The objective of the project is to determine the effect of mowing, disking, and the combination on wildflower density, diversity, and community composition. I'll test the hypothesis that wildflower density does not differ between treatments and the control (which we would hope for, since the treatments were not applied yet!). To do this, I will consider several variations of linear models to compare differences between each treatment to the control group. Therefore, beta estimates from regression and their associated measures of precision will be assessed.
 
 ##### Data Preparation
 
@@ -190,7 +190,7 @@ plot(residuals(lm1))
 ```
 
 The residuals are quite messy. More points are concentrated below zero,
-and those above zero are typcically higher. Additionally, the residuals
+and those above zero are typically higher. Additionally, the residuals
 are heteroscedastic.
 
 Correct pseudoreplication with a linear mixed model:
@@ -258,7 +258,6 @@ zinb <- glmmTMB(TotalDens ~ Treatment + (1|Site/Subplot), datum2,
                 family = nbinom2, ziformula = ~1)
 summary(zinb)
 ```
-
 ```{r}
 plot(simulateResiduals(fittedModel = zinb))
 ```
